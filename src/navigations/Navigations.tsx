@@ -59,6 +59,14 @@ import CreateChannel from '../screens/Community/CreateChannel/CreateChannel';
 import Channels from '../screens/Community/CreateChannel/Channels';
 import ChannelCategories from '../screens/Community/CreateChannel/ChannelCategories';
 import BannedMember from '../screens/Community/Settings/BannedMember';
+import SendToken from '../screens/DM/SendToken';
+import Conversation from '../screens/DM/Conversation';
+import TokenSuccess from '../screens/DM/TokenSuccess';
+import Offerforsale from '../screens/DM/Offerforsale';
+import NFTOffer from '../screens/DM/NFTOffer';
+import MyRefferals from '../screens/Rewards/MyRefferals';
+import Dex from '../screens/Rewards/DEX';
+import Withdraw from '../screens/Rewards/Tabs/Withdraw';
 const Navigations = ({ magicProps }: { magicProps: any }) => {
   const Stack = createStackNavigator<RootStackParamList>();
   const config = {
@@ -471,6 +479,62 @@ const Navigations = ({ magicProps }: { magicProps: any }) => {
       <Stack.Screen
         name="BannedMember"
         component={BannedMember}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Conversation"
+        component={Conversation}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SendToken"
+        component={SendToken}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="TokenSuccess"
+        component={TokenSuccess}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Offerforsale"
+        component={Offerforsale}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="NFTOffer"
+        component={NFTOffer}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MyRefferals"
+        component={MyRefferals}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Dex"
+        component={Dex}
+        options={{
+          headerShown: false,
+        }}
+      />
+            <Stack.Screen
+        name="Withdraw"
+        component={Withdraw}
         options={{
           headerShown: false,
         }}

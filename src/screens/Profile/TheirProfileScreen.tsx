@@ -1,4 +1,4 @@
-import { Dimensions} from 'react-native';
+import { Dimensions } from 'react-native';
 import { appColor } from '../../constants';
 import { sizes } from '../../utils';
 const { height, width } = Dimensions.get('window');
@@ -7,9 +7,11 @@ import Header from '../../components/Profile/Header';
 import { useAppDispatch } from '../../controller/hooks';
 import TheirProfileBottomSheet from '../../components/Profile/About/TheirProfileBottomSheet';
 import ProfileTabNavigation from '../../navigations/ProfileTabNavigation';
+
 const size = new sizes(height, width);
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { updateSuperStarBottomSheet } from '../../controller/BottomSheetController';
+
 import BlockUserModal from '../../components/Feed/BlockUserModal';
 import ReportPanel from '../../components/Feed/ReportPanel';
 import ReportPostModal from '../../components/Feed/ReportPostModal';

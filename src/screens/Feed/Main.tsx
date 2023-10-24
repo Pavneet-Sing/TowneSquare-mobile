@@ -65,17 +65,7 @@ const Main = () => {
         </View>
       </View>
       <MainTab />
-      <Pressable
-        onPress={() =>
-          navigation.navigate('CreatePost', {
-            showToast: false,
-            whichPost: 'singlePost',
-          })
-        }
-        style={styles.FAB}
-      >
-        <AntDesign name="plus" size={25} color={appColor.kTextColor} />
-      </Pressable>
+
       {/* <View style={styles.overlay} /> */}
 
       <ReceiveTokenModal closeModal={closeModal} />

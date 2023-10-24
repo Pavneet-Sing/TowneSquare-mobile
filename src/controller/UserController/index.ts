@@ -41,7 +41,6 @@ interface UserState {
   };
   didToken: string;
   accountInfo: any;
-  metadata: any;
   editProfile: boolean;
   NFTCollections: NftCollection[];
   selectedSuperStars: {
@@ -331,7 +330,6 @@ const initialState: UserState = {
     },
   ],
   accountInfo: undefined,
-  metadata: undefined,
   selectedSuperStars: [],
   selectedSuperStar: [],
   bio: `🖇️ Love everything about blockchain \n🌍3 web3 Native \n 👀 Always on a lookout for blue chips`,
@@ -462,9 +460,6 @@ export const USER = createSlice({
     updateAccountInfo: (state, action: PayloadAction<any>) => {
       state.accountInfo = action.payload;
     },
-    updateMetadata: (state, action: PayloadAction<any>) => {
-      state.metadata = action.payload;
-    },
     updateSelectedSuperStar: (
       state,
       action: PayloadAction<{ uri: string; id: string }>
@@ -507,7 +502,6 @@ export const {
   updateProfileImage,
   updateEditProfile,
   updateAccountInfo,
-  updateMetadata,
   updateSelectedSuperStar,
   deleteSelectedSuperStar,
   resetSelectedSuperStar,
