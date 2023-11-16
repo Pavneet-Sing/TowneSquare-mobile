@@ -23,7 +23,7 @@ export enum POSTSTATE {
   NONE,
   PENDING,
   FULFILLED,
-  REJECTED
+  REJECTED,
 }
 
 interface Customer {
@@ -44,9 +44,9 @@ interface Comment {
 }
 export interface PostData {
   _id: string;
-  title: string;
+  //title: string;
   description: string;
-  imageUrl: ImageSourcePropType;
+  imageUrl: string;
   videoUrl: string;
   userId: string;
   repost: boolean;
@@ -55,9 +55,9 @@ export interface PostData {
   reposts: Array<string>;
   comments: Array<Comment>;
   customer: Customer;
-  originalCustomer:Customer
-  originalPostId:string
-  originalCustomerId:string
+  originalCustomer: Customer;
+  originalPostId: string;
+  originalCustomerId: string;
 }
 interface AtMentions {
   name: string;
@@ -74,7 +74,8 @@ interface AptosTags {
 }
 interface Post {
   AllPost: Array<PostData>;
-  PostState: POSTSTATE
+  OnlyUserPost: Array<PostData>;
+  PostState: POSTSTATE;
   data: AtMentions[];
   filteredAtMentions: AtMentions[];
   postMessage: string;
@@ -101,7 +102,39 @@ interface Post {
   communityPostPrivacy: "public" | "community-only";
 }
 const initialState: Post = {
-  AllPost: [],
+  AllPost: [{
+  "_id": "6543112773263dcd8d741ba0",
+  "userId": "65372778b8da0e521b8a3587",
+  "description": "11",
+  "imageUrl": "https://image1.com",
+  "videoUrl": "https://video1.com",
+  "createdAt": "2023-11-02T03:01:59.721Z",
+  "likes": [],
+  "comments": [],
+  "customer":  {
+      "_id": "65372778b8da0e521b8a3587",
+      "issuer": "did:ethr:0xcfe8dfc248cef257524ec05374fa6157114e8991",
+      "aptosWallet": "0xcfe8dfc248cef257524ec05374fa6157114e8991",
+      "nickname": "test nickname",
+      "username": "test12",
+      "email": "test@email.com",
+      "referralCode": "98N39"
+    },
+  "reposts": [],
+   "originalCustomer":  {
+      "_id": "65372778b8da0e521b8a3587",
+      "issuer": "did:ethr:0xcfe8dfc248cef257524ec05374fa6157114e8991",
+      "aptosWallet": "0xcfe8dfc248cef257524ec05374fa6157114e8991",
+      "nickname": "test nickname",
+      "username": "test12",
+      "email": "test@email.com",
+      "referralCode": "98N39"
+    },
+  "repost": false,
+  "originalPostId": "65430c7f372dd89672e9214d",
+  "originalCustomerId": "65372778b8da0e521b8a3587"
+}],
+  OnlyUserPost:[],
   PostState: POSTSTATE.NONE,
   data: atMentionData,
   filteredAtMentions: atMentionData,
@@ -135,7 +168,6 @@ const initialState: Post = {
   communityPostPrivacy: "public",
 };
 
-
 export const createPost = createAsyncThunk(
   "Feed/createPost",
   async ({ description, imageUrL, videoUrL, token }: any, thunkAPI) => {
@@ -166,11 +198,11 @@ export const getAllPost = createAsyncThunk(
   async (token: string, thunkAPI) => {
     try {
       const response = await axios.get(`${BACKEND_URL}posts/findAll`, {
-        params:{
-          page:"",
-          limit:"",
-          search:"",
-          userId:""
+        params: {
+          page: "",
+          limit: "",
+          search: "",
+          userId: "",
         },
         headers: {
           Accept: "application/json",
@@ -180,10 +212,33 @@ export const getAllPost = createAsyncThunk(
       });
 
       const result = await response.data;
-      console.log(result)
+      console.log(result, "result");
       return result;
     } catch (error) {
-      return thunkAPI.rejectWithValue;
+      return thunkAPI.rejectWithValue(error);
+      //return [];
+    }
+  }
+);
+
+export const getOnlyUserPost = createAsyncThunk(
+  "",
+  async ({ userId, token }: any) => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}posts/findByUserId/${userId}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      );
+      const result = await response.data;
+      return result;
+    } catch (error) {
+      return [];
     }
   }
 );
@@ -367,18 +422,24 @@ export const fieldHandlerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(createPost.fulfilled, (state, action) => {});
-    builder.addCase(getAllPost.fulfilled, (state, action) => {
+    builder.addCase(getAllPost.fulfilled, (state, action: PayloadAction<Array<PostData>>) => {
       state.AllPost = action.payload;
-      state.PostState = POSTSTATE.FULFILLED
+      state.PostState = POSTSTATE.FULFILLED;
     });
     builder.addCase(getAllPost.pending, (state, action) => {
-      state.PostState = POSTSTATE.PENDING
+      state.PostState = POSTSTATE.PENDING;
     });
     builder.addCase(getAllPost.rejected, (state, action) => {
-       state.PostState = POSTSTATE.REJECTED
+      state.PostState = POSTSTATE.REJECTED;
       state.AllPost = [...state.AllPost];
-     
-    })
+    });
+    builder.addCase(getOnlyUserPost.fulfilled, (state, action: PayloadAction<Array<PostData>>) => {
+      state.OnlyUserPost = action.payload
+    });
+    builder.addCase(getOnlyUserPost.rejected, (state, action) => {
+      state.PostState = POSTSTATE.REJECTED;
+      state.AllPost = [...state.OnlyUserPost];
+    });
   },
 });
 export const {

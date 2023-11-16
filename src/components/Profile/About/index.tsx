@@ -7,28 +7,29 @@ import {
   Dimensions,
   ScrollView,
   Pressable,
-} from 'react-native';
-import CheckedIcon from '../../../../assets/images/svg/CheckedIcon';
-import { appColor } from '../../../constants';
-import { useState, useReducer } from 'react';
-import { useFonts } from 'expo-font';
-import { fonts } from '../../../constants';
-import { sizes } from '../../../utils';
-import Info from '../../../../assets/images/svg/Info';
-import MessageIcon from '../../../../assets/images/svg/MessageIcon';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { UserPosts } from '../../Feed/DuumyData';
-import ForYou from '../../Feed/ForYou';
-import { useNavigation } from '@react-navigation/native';
-import { useAppSelector, useAppDispatch } from '../../../controller/hooks';
-import { updateSuperStarBottomSheet } from '../../../controller/BottomSheetController';
-import ProfileCard from './ProfileCard';
-import ProfileTipIcon from '../../../../assets/images/svg/ProfileTipIcon';
-import FollowIcon from '../../../../assets/images/svg/FollowIcon';
-import { updateTipBottomSheet } from '../../../controller/FeedsController';
+} from "react-native";
+import CheckedIcon from "../../../../assets/images/svg/CheckedIcon";
+import { appColor } from "../../../constants";
+import { useState, useReducer, useEffect } from "react";
+import { useFonts } from "expo-font";
+import { fonts } from "../../../constants";
+import { sizes } from "../../../utils";
+import Info from "../../../../assets/images/svg/Info";
+import MessageIcon from "../../../../assets/images/svg/MessageIcon";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { UserPosts } from "../../Feed/DuumyData";
+import ForYou from "../../Feed/ForYou";
+import { useNavigation } from "@react-navigation/native";
+import { useAppSelector, useAppDispatch } from "../../../controller/hooks";
+import { updateSuperStarBottomSheet } from "../../../controller/BottomSheetController";
+import ProfileCard from "./ProfileCard";
+import ProfileTipIcon from "../../../../assets/images/svg/ProfileTipIcon";
+import FollowIcon from "../../../../assets/images/svg/FollowIcon";
+import { updateTipBottomSheet } from "../../../controller/FeedsController";
 const Tab = createMaterialTopTabNavigator();
-import ViewSuperStarsModal from './ViewSuperStarsModal';
-const { height, width } = Dimensions.get('window');
+import ViewSuperStarsModal from "./ViewSuperStarsModal";
+import { getOnlyUserPost } from "../../../controller/createPost";
+const { height, width } = Dimensions.get("window");
 const size = new sizes(height, width);
 
 type SuperStarReducerState = {
@@ -36,7 +37,7 @@ type SuperStarReducerState = {
   imageUri: string;
 };
 type SuperStarReducerAction = {
-  type: 'SHOW' | 'CLOSE';
+  type: "SHOW" | "CLOSE";
   payload?: {
     showSuperStarModal: boolean;
     imageUri: string;
@@ -47,15 +48,15 @@ const selectedSuperStarsReducer = (
   action: SuperStarReducerAction
 ) => {
   switch (action.type) {
-    case 'SHOW':
+    case "SHOW":
       return {
         showSuperStarModal: action.payload.showSuperStarModal,
         imageUri: action.payload.imageUri,
       };
-    case 'CLOSE':
+    case "CLOSE":
       return {
         showSuperStarModal: false,
-        imageUri: '',
+        imageUri: "",
       };
 
     default:
@@ -66,23 +67,35 @@ const selectedSuperStarsReducer = (
 const About = ({ route }) => {
   const [superStarModal, useDispatch] = useReducer(selectedSuperStarsReducer, {
     showSuperStarModal: false,
-    imageUri: '',
+    imageUri: "",
   });
   const [following, follow] = useState(false);
   // const [showSuperStarModal, setModalVisibility] = useState(false);
   const typeOfProfile = route.params.typeOfProfile as
-    | 'myProfile'
-    | 'theirProfile';
+    | "myProfile"
+    | "theirProfile";
   const { selectedSuperStars, bio, profilePics } = useAppSelector((state) => ({
     bio: state.USER.bio,
     selectedSuperStars: state.USER.selectedSuperStars,
     profilePics: state.USER.details.profileImage,
   }));
 
+     useEffect(() => {
+    dispatch(getOnlyUserPost({userId:"", token:userToken}))
+  }, [])
+
+   
+   const userToken = useAppSelector(
+    (state) => state.USER.didToken
+  );
+  const OnlyUserPost = useAppSelector(
+    (state) => state.CreatePostController.OnlyUserPost
+  );
+
   let [isLoaded] = useFonts({
-    'Outfit-Bold': fonts.OUTFIT_BOLD,
-    'Outfit-SemiBold': fonts.OUTFIT_SEMIBOLD,
-    'Outfit-Regular': fonts.OUTFIT_REGULAR,
+    "Outfit-Bold": fonts.OUTFIT_BOLD,
+    "Outfit-SemiBold": fonts.OUTFIT_SEMIBOLD,
+    "Outfit-Regular": fonts.OUTFIT_REGULAR,
   });
 
   const { navigate } = useNavigation();
@@ -90,34 +103,34 @@ const About = ({ route }) => {
   const dispatch = useAppDispatch();
   const [view, setView] = useState<number>(2);
 
-  const NAME = 'Real JC';
-  const NICKNAME = 'jczhang';
-  const APTOS_DOMAIN_NAME = 'jczhang.apt';
-  const DATE = '03/07/2023';
-  const FOLLOWING = '2,499';
-  const FOLLOWERS = '28,872';
-  const POST = '189';
-  const COMMUNITIES = '22';
+  const NAME = "Real JC";
+  const NICKNAME = "jczhang";
+  const APTOS_DOMAIN_NAME = "jczhang.apt";
+  const DATE = "03/07/2023";
+  const FOLLOWING = "2,499";
+  const FOLLOWERS = "28,872";
+  const POST = "189";
+  const COMMUNITIES = "22";
 
-  const onlyUserPost = UserPosts.filter(
-    (userPost) => userPost.nickname == NICKNAME
-  );
+  // const onlyUserPost = UserPosts.filter(
+  //   (userPost) => userPost.nickname == NICKNAME
+  // );
 
   const Posts = () => {
-    return onlyUserPost.map((userpost) => (
-      <ForYou key={userpost.id} data={userpost} myPost shouldPFPSwipe={false} />
+    return OnlyUserPost.map((userpost) => (
+      <ForYou key={userpost._id} data={userpost} myPost shouldPFPSwipe={false} />
     ));
   };
 
   const Replies = () => {
-    return onlyUserPost.map((userpost) => (
-      <ForYou key={userpost.id} data={userpost} myPost shouldPFPSwipe={false} />
+    return OnlyUserPost.map((userpost) => (
+      <ForYou key={userpost._id} data={userpost} myPost shouldPFPSwipe={false} />
     ));
   };
 
   const Media = () => {
-    return onlyUserPost.map((userpost) => (
-      <ForYou key={userpost.id} data={userpost} myPost shouldPFPSwipe={false} />
+    return OnlyUserPost.map((userpost) => (
+      <ForYou key={userpost._id} data={userpost} myPost shouldPFPSwipe={false} />
     ));
   };
 
@@ -134,13 +147,14 @@ const About = ({ route }) => {
   };
 
   const handleFollow = () => {
-    following && navigate('FollowersScreen', { screen: 'Following' });
+    following && navigate("FollowersScreen", { screen: "Following" });
     follow((previous) => !previous);
   };
   return (
     <SafeAreaView
       style={{
         backgroundColor: appColor.feedBackground,
+
       }}
     >
       <ScrollView>
@@ -155,7 +169,7 @@ const About = ({ route }) => {
           POST={POST}
         />
 
-        {typeOfProfile === 'theirProfile' && (
+        {typeOfProfile === "theirProfile" && (
           <View style={styles.view}>
             <Pressable
               onPress={handleFollow}
@@ -177,7 +191,7 @@ const About = ({ route }) => {
                 <FollowIcon size={size.getHeightSize(24)} />
               )}
               <Text style={styles.followText}>
-                {following ? 'Following' : 'Follow'}
+                {following ? "Following" : "Follow"}
               </Text>
             </Pressable>
             <View style={styles.iconView}>
@@ -213,7 +227,7 @@ const About = ({ route }) => {
               styles.superStarView,
               {
                 marginBottom:
-                  typeOfProfile === 'myProfile'
+                  typeOfProfile === "myProfile"
                     ? size.getHeightSize(14)
                     : size.getHeightSize(14),
               },
@@ -221,13 +235,13 @@ const About = ({ route }) => {
           >
             <View
               style={{
-                flexDirection: 'row',
+                flexDirection: "row",
                 gap: size.getWidthSize(8),
-                alignItems: 'center',
+                alignItems: "center",
               }}
             >
               <Text style={styles.aboutHeader}>
-                {typeOfProfile === 'myProfile' && 'My '}Super Stars
+                {typeOfProfile === "myProfile" && "My "}Super Stars
               </Text>
               <Info
                 onPress={() => {
@@ -236,12 +250,12 @@ const About = ({ route }) => {
               />
             </View>
 
-            {typeOfProfile === 'theirProfile' ? (
+            {typeOfProfile === "theirProfile" ? (
               <></>
             ) : selectedSuperStars.length > 0 ? (
               <Pressable
                 onPress={() => {
-                  navigate('SuperStarCollectionScreen');
+                  navigate("SuperStarCollectionScreen");
                 }}
               >
                 <Text style={styles.edit}>Edit</Text>
@@ -265,7 +279,7 @@ const About = ({ route }) => {
                   <Pressable
                     onPress={() => {
                       useDispatch({
-                        type: 'SHOW',
+                        type: "SHOW",
                         payload: {
                           showSuperStarModal: true,
                           imageUri: item.uri,
@@ -287,7 +301,7 @@ const About = ({ route }) => {
                 ))}
               </ScrollView>
             </>
-          ) : typeOfProfile === 'theirProfile' ? (
+          ) : typeOfProfile === "theirProfile" ? (
             <></>
           ) : (
             <View style={styles.setNft}>
@@ -300,7 +314,7 @@ const About = ({ route }) => {
               <Pressable
                 style={styles.setNftButton}
                 onPress={() => {
-                  navigate('SuperStarCollectionScreen');
+                  navigate("SuperStarCollectionScreen");
                 }}
               >
                 <Text style={styles.setNftButtonText}>Set NFTs</Text>
@@ -339,13 +353,19 @@ const About = ({ route }) => {
             </Text>
           </Pressable>
         </View>
-        <View>{POST_MEDIA_REPLIES()}</View>
+        <View
+          style={{
+            backgroundColor: appColor.feedBackground,
+          }}
+        >
+          {POST_MEDIA_REPLIES()}
+        </View>
       </ScrollView>
       <ViewSuperStarsModal
         visibility={superStarModal.showSuperStarModal}
         close={() =>
           useDispatch({
-            type: 'CLOSE',
+            type: "CLOSE",
           })
         }
         imageUri={superStarModal.imageUri}
@@ -359,25 +379,25 @@ const styles = StyleSheet.create({
     backgroundColor: appColor.kgrayDark2,
     marginTop: 15,
     borderRadius: 40,
-    borderColor: 'white',
+    borderColor: "white",
     padding: 15,
   },
   text: {
     color: appColor.kGrayscale,
-    fontFamily: 'Outfit-Bold',
+    fontFamily: "Outfit-Bold",
     paddingLeft: 5,
   },
 
   view2Box: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   view2TextUp: {
-    fontFamily: 'Outfit-Bold',
+    fontFamily: "Outfit-Bold",
     color: appColor.kTextColor,
   },
   view2TextDown: {
-    fontFamily: 'Outfit-Regular',
+    fontFamily: "Outfit-Regular",
     color: appColor.kGrayscale,
   },
   aboutDiv: {
@@ -386,13 +406,13 @@ const styles = StyleSheet.create({
   },
   aboutHeader: {
     color: appColor.kTextColor,
-    fontFamily: 'Outfit-Bold',
+    fontFamily: "Outfit-Bold",
     fontSize: size.fontSize(20),
     lineHeight: size.getHeightSize(24),
   },
   aboutText: {
     color: appColor.kTextColor,
-    fontFamily: 'Outfit-Regular',
+    fontFamily: "Outfit-Regular",
     fontSize: size.fontSize(16),
     lineHeight: size.getHeightSize(20),
   },
@@ -400,30 +420,30 @@ const styles = StyleSheet.create({
     backgroundColor: appColor.kSecondaryButtonColor,
     flex: 1,
     paddingVertical: size.getHeightSize(8),
-    justifyContent: 'center',
+    justifyContent: "center",
     marginHorizontal: size.getWidthSize(4),
     borderRadius: 40,
     minHeight: size.getHeightSize(36),
   },
   focusedtabText: {
     color: appColor.kTextColor,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: size.fontSize(14),
     lineHeight: size.getHeightSize(20),
-    fontFamily: 'Outfit-SemiBold',
+    fontFamily: "Outfit-SemiBold",
   },
   tabText: {
     color: appColor.kTextColor,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: size.fontSize(14),
     lineHeight: size.getHeightSize(18),
-    fontFamily: 'Outfit-Regular',
+    fontFamily: "Outfit-Regular",
   },
   tab: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     flex: 1,
     paddingVertical: size.getHeightSize(8),
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: size.getWidthSize(4),
     borderRadius: 40,
   },
@@ -431,31 +451,31 @@ const styles = StyleSheet.create({
     height: size.getHeightAndWidth(140),
     width: size.getHeightAndWidth(140),
     borderRadius: 200,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 50,
   },
   superStarView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginHorizontal: size.getWidthSize(16),
   },
   edit: {
     color: appColor.kSecondaryButtonColor,
-    fontFamily: 'Outfit-SemiBold',
+    fontFamily: "Outfit-SemiBold",
     fontSize: size.fontSize(16),
     lineHeight: size.getHeightSize(21),
   },
   setNft: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingVertical: size.getHeightSize(16),
     paddingHorizontal: size.getWidthSize(16),
-    justifyContent: 'space-between',
-    borderStyle: 'dashed',
+    justifyContent: "space-between",
+    borderStyle: "dashed",
     borderColor: appColor.kGrayLight3,
     borderWidth: 1,
     borderRadius: 8,
@@ -463,25 +483,25 @@ const styles = StyleSheet.create({
   },
   setNftText: {
     color: appColor.kGrayscale,
-    fontFamily: 'Outfit-Regular',
+    fontFamily: "Outfit-Regular",
     fontSize: size.fontSize(14),
   },
   setNftButton: {
     backgroundColor: appColor.kWhiteColor,
     borderRadius: 30,
     paddingHorizontal: size.getWidthSize(16),
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   setNftButtonText: {
-    textAlign: 'center',
-    fontFamily: 'Outfit-Medium',
+    textAlign: "center",
+    fontFamily: "Outfit-Medium",
     fontSize: size.fontSize(16),
     color: appColor.kGrayscaleDart,
     letterSpacing: 0.32,
     lineHeight: size.getHeightSize(20),
   },
   tabView: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: appColor.kgrayDark2,
     borderRadius: 40,
     marginTop: size.getHeightSize(32),
@@ -489,21 +509,21 @@ const styles = StyleSheet.create({
     width: size.getWidthSize(344),
     paddingVertical: size.getHeightSize(4),
     marginBottom: size.getHeightSize(8),
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   view: {
     paddingHorizontal: size.getWidthSize(42),
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: size.getHeightSize(24),
-    alignSelf: 'center',
+    alignSelf: "center",
     gap: size.getWidthSize(16),
   },
   followView: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingVertical: size.getHeightSize(4),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: appColor.kSecondaryButtonColor,
     borderRadius: 40,
     gap: size.getWidthSize(8),
@@ -511,21 +531,21 @@ const styles = StyleSheet.create({
     minHeight: size.getHeightSize(34),
   },
   followText: {
-    textAlign: 'center',
-    fontFamily: 'Outfit-Medium',
+    textAlign: "center",
+    fontFamily: "Outfit-Medium",
     fontSize: size.fontSize(16),
     color: appColor.kWhiteColor,
     letterSpacing: 0.32,
     lineHeight: size.getHeightSize(20),
   },
   iconView: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingVertical: size.getHeightSize(4),
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: appColor.kWhiteColor,
     borderRadius: 40,
     gap: size.getWidthSize(8),
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: size.getWidthSize(16),
   },
 });

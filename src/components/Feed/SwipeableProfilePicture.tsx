@@ -37,6 +37,7 @@ const ButtonHeight = size.getHeightSize(48);
 const ButtonPadding = size.getHeightSize(4);
 const swipeableDimensions = ButtonHeight - 2 * ButtonPadding;
 const h_swipe_range = ButtonWidth - 2 * ButtonPadding - swipeableDimensions;
+
 const ProfilePicture = ({ swipeable, left, top }: Props) => {
   let longPressTimer: any;
   const LONG_PRESS_DURATION = 500;
