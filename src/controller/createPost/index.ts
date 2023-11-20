@@ -102,38 +102,39 @@ interface Post {
   communityPostPrivacy: "public" | "community-only";
 }
 const initialState: Post = {
-  AllPost: [{
-  "_id": "6543112773263dcd8d741ba0",
-  "userId": "65372778b8da0e521b8a3587",
-  "description": "11",
-  "imageUrl": "https://image1.com",
-  "videoUrl": "https://video1.com",
-  "createdAt": "2023-11-02T03:01:59.721Z",
-  "likes": [],
-  "comments": [],
-  "customer":  {
-      "_id": "65372778b8da0e521b8a3587",
-      "issuer": "did:ethr:0xcfe8dfc248cef257524ec05374fa6157114e8991",
-      "aptosWallet": "0xcfe8dfc248cef257524ec05374fa6157114e8991",
-      "nickname": "test nickname",
-      "username": "test12",
-      "email": "test@email.com",
-      "referralCode": "98N39"
-    },
-  "reposts": [],
-   "originalCustomer":  {
-      "_id": "65372778b8da0e521b8a3587",
-      "issuer": "did:ethr:0xcfe8dfc248cef257524ec05374fa6157114e8991",
-      "aptosWallet": "0xcfe8dfc248cef257524ec05374fa6157114e8991",
-      "nickname": "test nickname",
-      "username": "test12",
-      "email": "test@email.com",
-      "referralCode": "98N39"
-    },
-  "repost": false,
-  "originalPostId": "65430c7f372dd89672e9214d",
-  "originalCustomerId": "65372778b8da0e521b8a3587"
-}],
+//   AllPost: [{
+//   "_id": "6543112773263dcd8d741ba0",
+//   "userId": "65372778b8da0e521b8a3587",
+//   "description": "11",
+//   "imageUrl": "https://image1.com",
+//   "videoUrl": "https://video1.com",
+//   "createdAt": "2023-11-02T03:01:59.721Z",
+//   "likes": [],
+//   "comments": [],
+//   "customer":  {
+//       "_id": "65372778b8da0e521b8a3587",
+//       "issuer": "did:ethr:0xcfe8dfc248cef257524ec05374fa6157114e8991",
+//       "aptosWallet": "0xcfe8dfc248cef257524ec05374fa6157114e8991",
+//       "nickname": "test nickname",
+//       "username": "test12",
+//       "email": "test@email.com",
+//       "referralCode": "98N39"
+//     },
+//   "reposts": [],
+//    "originalCustomer":  {
+//       "_id": "65372778b8da0e521b8a3587",
+//       "issuer": "did:ethr:0xcfe8dfc248cef257524ec05374fa6157114e8991",
+//       "aptosWallet": "0xcfe8dfc248cef257524ec05374fa6157114e8991",
+//       "nickname": "test nickname",
+//       "username": "test12",
+//       "email": "test@email.com",
+//       "referralCode": "98N39"
+//     },
+//   "repost": false,
+//   "originalPostId": "65430c7f372dd89672e9214d",
+//   "originalCustomerId": "65372778b8da0e521b8a3587"
+// }],
+AllPost:[],
   OnlyUserPost:[],
   PostState: POSTSTATE.NONE,
   data: atMentionData,
