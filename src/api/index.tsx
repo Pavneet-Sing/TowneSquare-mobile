@@ -25,11 +25,21 @@ function createCall(path, data = null, headers = {}, method = 'POST') {
       .catch((error) => {
         if (error.code == 400) console.log(error.message);
       });
-  else
+  else if (method == 'POST')
     return fetch(`${BACKEND_URL}${path}`, {
       method: method,
       headers: merged,
       body: strData,
+    })
+      .then((resp) => resp.json())
+      .catch((error) => {
+        if (error.code == 400) console.log(error.message);
+      });
+  else if (method == 'PUT')
+    return fetch(`${BACKEND_URL}${path}`, {
+      method: method,
+      headers: merged,
+      body: data,
     })
       .then((resp) => resp.json())
       .catch((error) => {
@@ -52,5 +62,20 @@ export async function signup(
     'user/signup',
     { issuer, aptosWallet, nickname, username, email },
     { authorization: token }
+  );
+}
+
+export async function uploadProfileImage(
+  token: string,
+  profileImage: any
+) {
+  return createCall(
+    'user/upload-profile-photo',
+    {profileImage},
+    {
+      authorization: token,
+      'Content-Type': 'multipart/form-data'
+    },
+    "PUT"
   );
 }

@@ -34,7 +34,7 @@ import {
   updateMetadata,
 } from "../../controller/UserController";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { checkSignup, signup } from "../../api";
+import { checkSignup, signup, uploadProfileImage } from "../../api";
 import Loader from "../../../assets/svg/Loader";
 import { setLoginSession } from "../../utils/session";
 
@@ -106,6 +106,22 @@ const EmailLogin = ({ magic }: EmailLoginProps) => {
       (loaderRef.current as any).setNativeProps({ style: { display: "none" } });
   };
 
+  const createFormData = () => {
+    const data = new FormData();
+
+    data.append('photo', {
+      name: user.details.username,
+      type: 'Image/' + get_url_extension(profilePics),
+      uri: profilePics
+    } as any);
+    console.log(data);
+    return data;
+  };
+
+  function get_url_extension(url) {
+    return url.split(/[#?]/)[0].split('.').pop().trim();
+  }
+
   const handleNextSlide = async () => {
     setViewIndex((previous) => previous + 1);
     const newIndex = viewIndex + 1;
@@ -136,19 +152,25 @@ const EmailLogin = ({ magic }: EmailLoginProps) => {
 
     if (newIndex < views.length && flatListRef.current) {
       flatListRef.current.scrollToIndex({ index: newIndex, animated: true });
-    } else {
-      const res = await signup(
-        user.didToken,
-        user.metadata.issuer,
-        user.accountInfo.address,
-        user.details.Nickname,
-        user.details.username,
-        user.details.email
-      );
+      if (newIndex == 2) {
 
-      if (!res.error && res.success != false) {
-        navigation.navigate("Congratulations");
+        const res = await signup(
+          user.didToken,
+          user.metadata.issuer,
+          user.accountInfo.address,
+          user.details.Nickname,
+          user.details.username,
+          user.details.email
+        );
+        if (!res.error && res.success != false) {
+          navigation.navigate("Congratulations");
+        }
       }
+    } else {
+
+      const res = await uploadProfileImage(user.didToken, createFormData());
+      console.log(get_url_extension(profilePics), res);
+    
     }
   };
 
